@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "DLCLAttack"
+version = "0.1.0"
+description = "A general, model-agnostic compiler backdoor attack toolbox for Hugging Face models (DcL-BD)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "qazishayyan", email = "qazishayyan@gmail.com" }]
+dependencies = [
+    "torch>=2.1",
+    "transformers>=4.40",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+# Only needed to run examples/onnx_compiler.py (the example's cl_func, not
+# the library) and the one test that exercises a real compiler end-to-end.
+# DLCLAttack itself has no dependency on any particular compiler backend.
+examples = ["onnxruntime>=1.17", "onnxscript>=0.1"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
