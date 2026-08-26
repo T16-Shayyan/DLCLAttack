@@ -99,7 +99,7 @@ def synthetic_cl_func():
 def fast_config():
     """A config tuned to run in well under a second, for tests that only
     need the pipeline to execute correctly, not to demonstrate a strong
-    attack (see README's "Fidelity & Empirical Notes" for why toy-scale
+    attack (see README's "Notes on fidelity" for why toy-scale
     ASR is not representative)."""
     return {
         "target_label": 1,

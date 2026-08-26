@@ -98,7 +98,7 @@ def main() -> None:
         "numeric deviation from PyTorch eager (~1e-9 absolute) is small relative "
         "to the model's natural activation variance, so pre/post-compile ASR "
         "separation is weaker than the paper's results on production-scale "
-        "vision models. See README.md's 'Fidelity & Empirical Notes' section."
+        "vision models. See README.md's 'Notes on fidelity' section."
     )
 
 
