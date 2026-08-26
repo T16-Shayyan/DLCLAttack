@@ -72,7 +72,8 @@ def make_synthetic_compiler(rel_eps: float = 2e-3, seed: int = 0):
     generator = torch.Generator().manual_seed(seed)
 
     def perturb(tensor: torch.Tensor) -> torch.Tensor:
-        return tensor + tensor * rel_eps * torch.randn(tensor.shape, generator=generator)
+        noise = torch.randn(tensor.shape, generator=generator).to(tensor.device)
+        return tensor + tensor * rel_eps * noise
 
     class NoisyWrapper(torch.nn.Module):
         def __init__(self, module: torch.nn.Module):
