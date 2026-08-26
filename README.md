@@ -15,7 +15,7 @@ Definition-of-done checklist:
 
 | Requirement | Status |
 |---|---|
-| Runs end-to-end on a real HF model | Yes — `examples/quickstart.py`, tiny BERT model + real ONNX Runtime compiler |
+| Runs end-to-end on a real HF model | Yes — `examples/quickstart.py` (tiny BERT classifier + real ONNX Runtime compiler); `examples/quickstart_causal_lm.py` (Qwen2.5-0.5B, a real 24-layer causal LM, no code changes needed) |
 | Public API matches the spec | `Attacker(config).run(model, train_dataset, test_dataset, cl_func) -> (bd_model, logs)` |
 | `pip install -e .` installs cleanly, pinned deps | `pyproject.toml`, exact versions pinned |
 | README with install steps + runnable snippet | This file |
@@ -87,7 +87,10 @@ bd_model, logs = attack.run(model, train_dataset, test_dataset, cl_func)
 | `bd_model` | HF model | The backdoored model (same object as `model`). |
 | `logs` | `dict` | Metrics, timing, and config used for the run. |
 
-Full runnable example: [`examples/quickstart.py`](examples/quickstart.py).
+Full runnable example: [`examples/quickstart.py`](examples/quickstart.py) (BERT
+classifier). For a real text-generation model instead of a classifier, see
+[`examples/quickstart_causal_lm.py`](examples/quickstart_causal_lm.py)
+(Qwen2.5-0.5B) — same library code, different model family, no changes needed.
 
 ### Dataset format
 
