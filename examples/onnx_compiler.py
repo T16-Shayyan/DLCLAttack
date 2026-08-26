@@ -15,6 +15,7 @@ that returns a tensor (or an object with a ``.logits`` attribute).
 from __future__ import annotations
 
 import tempfile
+import warnings
 from pathlib import Path
 
 import onnxruntime as ort
@@ -67,14 +68,30 @@ def make_onnxruntime_compiler(reference_model: nn.Module, example_batch: int = 2
     dtype = reference_model.get_input_embeddings().weight.dtype
 
     def cl_func(module: nn.Module):
-        module.eval()
         wrapped = _LogitsOnly(module)
+        wrapped.eval()  # cascades to `module`, the submodule being exported
         dummy_embeds = torch.randn(example_batch, example_seq_len, hidden_size, dtype=dtype)
         dummy_mask = torch.ones(example_batch, example_seq_len, dtype=torch.long)
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             onnx_path = Path(tmp_dir) / "model.onnx"
-            with torch.no_grad():
+            with torch.no_grad(), warnings.catch_warnings():
+                # torch's newer dynamo-based exporter nags about the older
+                # `dynamic_axes` argument (recommending `dynamic_shapes`
+                # instead) and about an internal pytree API it's mid-way
+                # through deprecating. Both are transitional noise from the
+                # exporter itself, not signs of anything wrong with the
+                # export -- silenced here so the example's output stays
+                # readable; a real bug would still raise, not warn.
+                warnings.filterwarnings("ignore", category=UserWarning, module="torch.onnx")
+                warnings.filterwarnings("ignore", category=DeprecationWarning, module="torch.onnx")
+                warnings.filterwarnings("ignore", category=FutureWarning, message=".*LeafSpec.*")
+                # torch.onnx.export raises this one with stacklevel=2, so it's
+                # attributed to *this* module rather than torch.onnx -- the
+                # module-based filters above don't catch it, hence matching
+                # on message text instead.
+                warnings.filterwarnings("ignore", category=UserWarning, message=".*dynamic_axes.*")
+                warnings.filterwarnings("ignore", category=UserWarning, message=".*axis name.*")
                 torch.onnx.export(
                     wrapped,
                     (dummy_embeds, dummy_mask),
