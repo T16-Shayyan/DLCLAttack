@@ -6,6 +6,32 @@ Implementation of **DcL-BD**, the compiler backdoor attack from
 only works on a few hardcoded vision models. This is a pip-installable
 version that works on any Hugging Face model.
 
+## Submission
+
+This is the solution for Task 1 (General-Purpose Compiler Backdoor Attack
+Toolbox). Repo: https://github.com/T16-Shayyan/DLCLAttack
+
+Definition-of-done checklist:
+
+| Requirement | Status |
+|---|---|
+| Runs end-to-end on a real HF model | Yes — `examples/quickstart.py`, tiny BERT model + real ONNX Runtime compiler |
+| Public API matches the spec | `Attacker(config).run(model, train_dataset, test_dataset, cl_func) -> (bd_model, logs)` |
+| `pip install -e .` installs cleanly, pinned deps | `pyproject.toml`, exact versions pinned |
+| README with install steps + runnable snippet | This file |
+| Test suite (pytest) covering the core path | 39 tests, `tests/`, ~4s runtime |
+| Config is data-driven, not hardcoded | `config.py`, validated on every field |
+| Readable code: names, type hints, docstrings, logging | throughout `src/DLCLAttack/` |
+| Can walk through architecture and justify choices | see "Module layout," "How the attack runs," and "Notes on fidelity" below |
+
+Implementation notes — what I generalized from the paper, where I made a
+judgment call on an ambiguous or missing detail, and one real bug I hit
+and fixed (an exception-based shortcut that broke ONNX export) — are in
+the **Notes on fidelity** section further down. That section is the
+"documentation of the implementation" part of this submission; it's kept
+in the README rather than a separate doc so it stays next to the code it
+describes.
+
 ## What it does
 
 DL compilers (TVM, ONNX Runtime, `torch.compile`) reorder floating-point

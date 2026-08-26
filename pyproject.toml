@@ -11,17 +11,17 @@ requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "qazishayyan", email = "qazishayyan@gmail.com" }]
 dependencies = [
-    "torch>=2.1",
-    "transformers>=4.40",
-    "numpy>=1.24",
+    "torch==2.13.0",
+    "transformers==5.15.1",
+    "numpy==2.4.6",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0"]
+dev = ["pytest==9.1.1"]
 # Only needed to run examples/onnx_compiler.py (the example's cl_func, not
 # the library) and the one test that exercises a real compiler end-to-end.
 # DLCLAttack itself has no dependency on any particular compiler backend.
-examples = ["onnxruntime>=1.17", "onnxscript>=0.1"]
+examples = ["onnxruntime==1.29.0", "onnxscript==0.7.1"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
