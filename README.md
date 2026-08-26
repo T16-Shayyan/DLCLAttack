@@ -187,8 +187,17 @@ src/DLCLAttack/
 **`adapters.py`** is where every model-specific assumption lives:
 
 - `find_block_list` finds the model's transformer block stack by picking
-  the *longest* `nn.ModuleList` in the module tree. Works across BERT,
-  GPT-2, LLaMA, T5, ViT without hardcoding any architecture name.
+  the *longest* `nn.ModuleList` in the module tree — architecture-name-free
+  by design. Verified against BERT (`bert.encoder.layer`) and Qwen2
+  (`model.layers`) — two genuinely different architectures: an encoder
+  classifier vs. a decoder-only causal LM with no classification head.
+  **Not yet tested**: encoder-decoder models (T5, BART), which have *two*
+  separate block stacks — if they're the same length, this heuristic
+  could pick either one. Also untested: patch-based vision models (ViT),
+  whose `get_input_embeddings()` may not return a real token embedding at
+  all — if so, the adapter fails loudly (`ModelAdapterError`) rather than
+  silently doing the wrong thing, but that's inferred from the code, not
+  verified by actually running one.
 - `SubModel1` wraps the model with a forward-hook on the split block,
   reading its input instead of reimplementing a forward pass.
 - `run_submodel2` does the same but overrides the split block's input.
